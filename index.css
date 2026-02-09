@@ -1,0 +1,246 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(240, 10%, 3.9%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(215, 16%, 47%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(240, 10%, 3.9%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(240, 10%, 3.9%);
+  --border: hsl(214, 32%, 91%);
+  --input: hsl(214, 32%, 91%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(142, 76%, 36%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(38, 92%, 50%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(207, 90%, 54%);
+  --radius: 0.5rem;
+  
+  /* Field Service App Custom Colors */
+  --primary-dark: hsl(207, 90%, 48%);
+  --secondary-dark: hsl(142, 76%, 30%);
+  --accent-dark: hsl(38, 92%, 44%);
+  --neutral-light: hsl(210, 40%, 98%);
+  --neutral-dark: hsl(215, 28%, 17%);
+  --neutral-darker: hsl(220, 39%, 11%);
+  
+  /* Status Colors */
+  --status-active: hsl(38, 92%, 50%);
+  --status-scheduled: hsl(220, 14%, 71%);
+  --status-completed: hsl(142, 76%, 36%);
+  --status-error: hsl(0, 84%, 60%);
+  --status-warning: hsl(25, 95%, 53%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(210, 40%, 98%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  
+  /* Field Service App Dark Mode Colors */
+  --primary-dark: hsl(207, 90%, 48%);
+  --secondary-dark: hsl(142, 76%, 30%);
+  --accent-dark: hsl(38, 92%, 44%);
+  --neutral-light: hsl(240, 10%, 3.9%);
+  --neutral-dark: hsl(215, 28%, 17%);
+  --neutral-darker: hsl(220, 39%, 11%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+
+  /* Custom animations for Field Service App */
+  .chat-bubble {
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .pulse-ring {
+    animation: pulse-ring 2s infinite;
+  }
+
+  @keyframes pulse-ring {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.3);
+      opacity: 0;
+    }
+  }
+
+  .scanning-line {
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, hsl(207, 90%, 54%), transparent);
+    animation: scan 2s infinite;
+  }
+
+  @keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+  }
+
+  /* AR Overlay Styles */
+  .ar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+  }
+
+  .ar-label {
+    position: absolute;
+    background: hsla(207, 90%, 54%, 0.9);
+    color: hsl(210, 40%, 98%);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px hsla(0, 0%, 0%, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .ar-label.status-warning {
+    background: hsla(25, 95%, 53%, 0.9);
+  }
+
+  .ar-label.status-error {
+    background: hsla(0, 84%, 60%, 0.9);
+  }
+
+  .ar-label.status-info {
+    background: hsla(207, 90%, 54%, 0.9);
+  }
+
+  /* Voice Input Styles */
+  .voice-active {
+    background: hsl(0, 84%, 60%);
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+  }
+
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    .mobile-optimized {
+      font-size: 16px; /* Prevents zoom on iOS */
+    }
+  }
+
+  /* Dark mode toggle */
+  .dark-mode-toggle {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* Status indicators */
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .status-dot.online {
+    background-color: hsl(142, 76%, 36%);
+    animation: pulse-dot 2s infinite;
+  }
+
+  .status-dot.offline {
+    background-color: hsl(0, 84%, 60%);
+  }
+
+  .status-dot.sync {
+    background-color: hsl(207, 90%, 54%);
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* Work order priority indicators */
+  .priority-high {
+    border-left-color: hsl(0, 84%, 60%);
+  }
+
+  .priority-medium {
+    border-left-color: hsl(25, 95%, 53%);
+  }
+
+  .priority-low {
+    border-left-color: hsl(142, 76%, 36%);
+  }
+
+  .priority-emergency {
+    border-left-color: hsl(0, 84%, 60%);
+    animation: pulse-border 1s infinite;
+  }
+
+  @keyframes pulse-border {
+    0%, 100% {
+      border-left-width: 4px;
+    }
+    50% {
+      border-left-width: 6px;
+    }
+  }
+}

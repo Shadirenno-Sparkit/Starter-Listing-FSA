@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test AI Assistant</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .chat-container { max-width: 600px; margin: 0 auto; }
+        .message { margin: 10px 0; padding: 10px; border-radius: 8px; }
+        .user { background: #e3f2fd; text-align: right; }
+        .assistant { background: #f5f5f5; }
+        input[type="text"] { width: 80%; padding: 8px; }
+        button { padding: 8px 16px; }
+        .test-results { margin-top: 20px; padding: 15px; background: #f0f0f0; border-radius: 8px; }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h2>AI Assistant Test</h2>
+        <div id="chat-messages"></div>
+        <div>
+            <input type="text" id="message-input" placeholder="Ask about gas station maintenance..." />
+            <button onclick="sendMessage()">Send</button>
+        </div>
+        
+        <div class="test-results">
+            <h3>Test Results</h3>
+            <div id="test-status">Ready to test...</div>
+        </div>
+    </div>
+
+    <script>
+        let conversationId = null;
+        
+        async function createConversation() {
+            try {
+                const response = await fetch('/api/conversations', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [],
+                        context: { equipment: { type: 'fuel_dispenser' } }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+                
+                const data = await response.json();
+                conversationId = data.id;
+                document.getElementById('test-status').innerHTML = `✓ Conversation created: ${conversationId}`;
+                return true;
+            } catch (error) {
+                document.getElementById('test-status').innerHTML = `✗ Failed to create conversation: ${error.message}`;
+                return false;
+            }
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            if (!conversationId) {
+                const created = await createConversation();
+                if (!created) return;
+            }
+            
+            // Display user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            try {
+                const response = await fetch(`/api/conversations/${conversationId}/messages`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                }
+                
+                const data = await response.json();
+                addMessage(data.response, 'assistant');
+                document.getElementById('test-status').innerHTML = `✓ AI response received successfully`;
+                
+            } catch (error) {
+                addMessage(`Error: ${error.message}`, 'assistant');
+                document.getElementById('test-status').innerHTML = `✗ AI request failed: ${error.message}`;
+            }
+        }
+        
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+            messageDiv.textContent = text;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Test on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('test-status').innerHTML = 'Testing AI Assistant connection...';
+            await createConversation();
+        });
+        
+        // Allow Enter key to send message
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>

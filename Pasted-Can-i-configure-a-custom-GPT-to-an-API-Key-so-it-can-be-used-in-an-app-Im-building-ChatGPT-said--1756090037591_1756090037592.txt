@@ -1,0 +1,74 @@
+Can i configure a custom GPT to an API Key so it can be used in an app Im building?
+
+
+ChatGPT said:
+Yes, you can use a custom GPT (like one you've configured in ChatGPT's Custom GPT builder) via the OpenAI API, but with important caveats:
+
+✅ What You Can Do
+Use a custom GPT via OpenAI API (as of 2024):
+
+When you create a custom GPT at https://chat.openai.com/gpts, it's given a unique ID.
+
+You can invoke that GPT programmatically using the chat.completions endpoint and the custom GPT’s ID.
+
+Configure with your API key:
+
+Yes, you can use your personal or org-level API key to call the custom GPT.
+
+This enables your app to interact with your configured GPT just like it would with gpt-4o, gpt-4-turbo, etc.
+
+Maintain the custom instructions and tools:
+
+The GPT you’ve built will retain:
+
+Its system prompt (persona, behavior, etc.)
+
+Uploaded files/knowledge base
+
+Functions (tool use), if defined in the builder.
+
+❗ Limitations
+No fine-tuning control: You cannot fully programmatically change the GPT’s internal logic once it’s published. Use function calling or external tools for dynamic behavior.
+
+Rate limits and costs: Using the custom GPT via the API consumes your OpenAI usage quota and follows the same pricing model as the underlying model (e.g., gpt-4o).
+
+🧠 How to Do It — Sample API Call
+Here’s how you'd call a custom GPT from your app:
+
+bash
+Copy
+Edit
+curl https://api.openai.com/v1/chat/completions \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "OpenAI-Beta: gpts" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}],
+    "tools": [],
+    "custom_gpt_id": "your-custom-gpt-id"
+  }'
+Or in Python:
+
+python
+Copy
+Edit
+import openai
+
+openai.api_key = "YOUR_API_KEY"
+
+response = openai.ChatCompletion.create(
+    model="gpt-4o",
+    custom_gpt_id="your-custom-gpt-id",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+
+print(response.choices[0].message['content'])
+🔐 Where to Find Your custom_gpt_id
+You can find it by:
+
+Visiting your GPT at chat.openai.com/gpts
+
+Opening the GPT in the editor
+
+Copying the URL — it will look like https://chat.openai.com/gpts/editor/<GPT_ID>
